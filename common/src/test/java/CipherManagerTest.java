@@ -294,6 +294,7 @@ public class CipherManagerTest {
                 testCase.signature,
                 "sig",
                 true,
+                false,
                 false);
     }
 

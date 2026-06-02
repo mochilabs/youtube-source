@@ -22,6 +22,7 @@ public class StreamFormat {
   private final String signature;
   private final String signatureKey;
   private final boolean defaultAudioTrack;
+  private final boolean isAutoDubbed;
   private final boolean isDrc;
 
   /**
@@ -34,6 +35,7 @@ public class StreamFormat {
    * @param signature Cipher signature for this format
    * @param signatureKey The key to use for deciphered signature in the final playback URL
    * @param isDefaultAudioTrack Whether this format contains an audio track that is used by default.
+   * @param isAutoDubbed Whether this format contains an AI dubbed audio track.
    * @param isDrc Whether this format has Dynamic Range Compression.
    */
   public StreamFormat(
@@ -47,6 +49,7 @@ public class StreamFormat {
       String signature,
       String signatureKey,
       boolean isDefaultAudioTrack,
+      boolean isAutoDubbed,
       boolean isDrc
   ) {
     this.info = FormatInfo.get(type);
@@ -60,6 +63,7 @@ public class StreamFormat {
     this.signature = signature;
     this.signatureKey = signatureKey;
     this.defaultAudioTrack = isDefaultAudioTrack;
+    this.isAutoDubbed = isAutoDubbed;
     this.isDrc = isDrc;
   }
 
@@ -148,6 +152,13 @@ public class StreamFormat {
   }
 
   /**
+   * @return Whether this format contains an AI dubbed audio track.
+   */
+  public boolean isAutoDubbed() {
+    return isAutoDubbed;
+  }
+
+  /**
    * @return Whether this format has Dynamic Range Compression.
    */
   public boolean isDrc() {
@@ -161,6 +172,7 @@ public class StreamFormat {
         ", type=" + type +
         ", bitrate=" + bitrate +
         ", audioChannels=" + audioChannels +
+        ", isAutoDubbed=" + isAutoDubbed +
         ", isDrc=" + isDrc +
         ", nParam=" + nParameter +
         ", sigKey=" + signatureKey +

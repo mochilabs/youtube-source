@@ -9,6 +9,7 @@ public class YoutubeSourceOptions {
     private String remoteCipherUrl;
     private String remoteCipherPassword;
     private String remoteCipherUserAgent;
+    private boolean allowAutoDubbedAudio = true;
 
     public boolean isAllowSearch() {
         return allowSearch;
@@ -34,6 +35,15 @@ public class YoutubeSourceOptions {
 
     public YoutubeSourceOptions setAllowDirectPlaylistIds(boolean allowDirectPlaylistIds) {
         this.allowDirectPlaylistIds = allowDirectPlaylistIds;
+        return this;
+    }
+
+    public boolean isAllowAutoDubbedAudio() {
+        return allowAutoDubbedAudio;
+    }
+
+    public YoutubeSourceOptions setAllowAutoDubbedAudio(boolean allowAutoDubbedAudio) {
+        this.allowAutoDubbedAudio = allowAutoDubbedAudio;
         return this;
     }
 

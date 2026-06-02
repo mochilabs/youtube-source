@@ -69,7 +69,7 @@ public abstract class ThumbnailStreamingNonMusicClient extends ThumbnailNonMusic
             log.warn("Loading formats either failed to load or were skipped due to missing fields, json: {}", streamingData.format());
         }
 
-        return new TrackFormats(formats, playerScript.url);
+        return new TrackFormats(formats, playerScript.url, source.isAllowAutoDubbedAudio());
     }
 
     protected boolean extractFormat(@NotNull JsonBrowser formatJson,
@@ -109,6 +109,7 @@ public abstract class ThumbnailStreamingNonMusicClient extends ThumbnailNonMusic
                 cipherInfo.get("s"),
                 cipherInfo.getOrDefault("sp", DEFAULT_SIGNATURE_KEY),
                 formatJson.get("audioTrack").get("audioIsDefault").asBoolean(true),
+                formatJson.get("audioTrack").get("isAutoDubbed").asBoolean(false),
                 formatJson.get("isDrc").asBoolean(false)
             ));
 

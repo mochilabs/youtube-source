@@ -14,6 +14,7 @@ public class YoutubeConfig {
     private boolean allowSearch = true;
     private boolean allowDirectVideoIds = true;
     private boolean allowDirectPlaylistIds = true;
+    private boolean allowAutoDubbedAudio = true;
     private YoutubeRemoteCipherConfig remoteCipher;
     private Pot pot = null;
     private String[] clients;
@@ -34,6 +35,10 @@ public class YoutubeConfig {
 
     public boolean getAllowDirectPlaylistIds() {
         return allowDirectPlaylistIds;
+    }
+
+    public boolean getAllowAutoDubbedAudio() {
+        return allowAutoDubbedAudio;
     }
 
     public Pot getPot() {
@@ -66,6 +71,10 @@ public class YoutubeConfig {
 
     public void setAllowDirectPlaylistIds(boolean allowDirectPlaylistIds) {
         this.allowDirectPlaylistIds = allowDirectPlaylistIds;
+    }
+
+    public void setAllowAutoDubbedAudio(boolean allowAutoDubbedAudio) {
+        this.allowAutoDubbedAudio = allowAutoDubbedAudio;
     }
 
     public void setPot(Pot pot) {

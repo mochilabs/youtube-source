@@ -2,19 +2,27 @@ package dev.lavalink.youtube.track.format;
 
 import org.jetbrains.annotations.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.StringJoiner;
 
 import static com.sedmelluq.discord.lavaplayer.container.Formats.MIME_AUDIO_WEBM;
 
 public class TrackFormats {
+    private static final Logger log = LoggerFactory.getLogger(TrackFormats.class);
+
     private final List<StreamFormat> formats;
     private final String playerScriptUrl;
+    private final boolean allowAutoDubbedAudio;
 
     public TrackFormats(@NotNull List<StreamFormat> formats,
-                        @NotNull String playerScriptUrl) {
+                        @NotNull String playerScriptUrl,
+                        boolean allowAutoDubbedAudio) {
         this.formats = formats;
         this.playerScriptUrl = playerScriptUrl;
+        this.allowAutoDubbedAudio = allowAutoDubbedAudio;
     }
 
     @NotNull
@@ -30,8 +38,27 @@ public class TrackFormats {
     @NotNull
     public StreamFormat getBestFormat() {
         StreamFormat bestFormat = null;
+        StreamFormat fallbackFormat = null;
+
+        log.debug("Selecting best format. allowAutoDubbedAudio={}", allowAutoDubbedAudio);
 
         for (StreamFormat format : formats) {
+            log.debug("Evaluating format: itag={}, type={}, bitrate={}, isDefault={}, isAutoDubbed={}", 
+                     format.getItag(), format.getType().getMimeType(), format.getBitrate(), 
+                     format.isDefaultAudioTrack(), format.isAutoDubbed());
+
+            // If we don't allow auto dubbed audio, track the best non-dubbed format as fallback
+            if (!allowAutoDubbedAudio && !format.isAutoDubbed()) {
+                if (isBetterFormat(format, fallbackFormat)) {
+                    fallbackFormat = format;
+                }
+            }
+
+            if (!allowAutoDubbedAudio && format.isAutoDubbed()) {
+                log.debug("Skipping format {} because it is auto-dubbed and allowAutoDubbedAudio is false", format.getItag());
+                continue;
+            }
+
             if (!format.isDefaultAudioTrack()) {
                 continue;
             }
@@ -41,12 +68,36 @@ public class TrackFormats {
             }
         }
 
+        if (!allowAutoDubbedAudio) {
+            boolean isBestVideo = bestFormat != null && bestFormat.getInfo() != null && bestFormat.getInfo().ordinal() >= 3;
+            boolean isFallbackAudio = fallbackFormat != null && fallbackFormat.getInfo() != null && fallbackFormat.getInfo().ordinal() < 3;
+
+            if (bestFormat == null || (isBestVideo && isFallbackAudio)) {
+                if (fallbackFormat != null) {
+                    log.info("Bypassed auto-dubbed default audio track and selected original track (itag={})", fallbackFormat.getItag());
+                } else {
+                    log.debug("Overriding with non-dubbed fallback, but fallbackFormat is null");
+                }
+                bestFormat = fallbackFormat;
+            }
+        }
+
+        if (bestFormat == null) {
+            for (StreamFormat format : formats) {
+                if (isBetterFormat(format, bestFormat)) {
+                    bestFormat = format;
+                }
+            }
+            log.debug("Used general fallback format: {}", bestFormat != null ? bestFormat.getItag() : "null");
+        }
+
         if (bestFormat == null) {
             StringJoiner joiner = new StringJoiner(", ");
             formats.forEach(format -> joiner.add(format.getType().toString()));
             throw new RuntimeException("No supported audio streams available, available types: " + joiner);
         }
 
+        log.debug("Final selected format: itag={}", bestFormat.getItag());
         return bestFormat;
     }
 

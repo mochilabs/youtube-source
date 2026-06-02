@@ -75,6 +75,7 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
     protected final boolean allowSearch;
     protected final boolean allowDirectVideoIds;
     protected final boolean allowDirectPlaylistIds;
+    protected final boolean allowAutoDubbedAudio;
     protected final Client[] clients;
 
     protected YoutubeOauth2Handler oauth2Handler;
@@ -146,6 +147,7 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
         this.allowSearch = options.isAllowSearch();
         this.allowDirectVideoIds = options.isAllowDirectVideoIds();
         this.allowDirectPlaylistIds = options.isAllowDirectPlaylistIds();
+        this.allowAutoDubbedAudio = options.isAllowAutoDubbedAudio();
         this.clients = clients;
         this.oauth2Handler = new YoutubeOauth2Handler(httpInterfaceManager);
 
@@ -165,6 +167,10 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
     @Override
     public String getSourceName() {
         return "youtube";
+    }
+
+    public boolean isAllowAutoDubbedAudio() {
+        return allowAutoDubbedAudio;
     }
 
     public void setPlaylistPageCount(int count) {

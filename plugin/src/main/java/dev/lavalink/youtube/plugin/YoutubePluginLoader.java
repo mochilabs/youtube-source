@@ -150,7 +150,8 @@ public class YoutubePluginLoader implements AudioPlayerManagerConfiguration {
         final YoutubeSourceOptions sourceOptions = new YoutubeSourceOptions()
             .setAllowSearch(youtubeConfig == null || youtubeConfig.getAllowSearch())
             .setAllowDirectVideoIds(youtubeConfig == null || youtubeConfig.getAllowDirectVideoIds())
-            .setAllowDirectPlaylistIds(youtubeConfig == null || youtubeConfig.getAllowDirectPlaylistIds());
+            .setAllowDirectPlaylistIds(youtubeConfig == null || youtubeConfig.getAllowDirectPlaylistIds())
+            .setAllowAutoDubbedAudio(youtubeConfig == null || youtubeConfig.getAllowAutoDubbedAudio());
 
         Client[] clients;
 
