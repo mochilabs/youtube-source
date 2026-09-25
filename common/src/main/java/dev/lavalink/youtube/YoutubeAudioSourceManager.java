@@ -81,6 +81,7 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
     protected YoutubeOauth2Handler oauth2Handler;
     protected YoutubeHttpContextFilter contextFilter;
     protected CipherManager cipherManager;
+    protected RemotePoToken remotePoToken;
 
     public YoutubeAudioSourceManager() {
         this(true);
@@ -162,6 +163,9 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
         } else {
             this.cipherManager = new LocalSignatureCipherManager();
         }
+        if (!DataFormatTools.isNullOrEmpty(options.getRemotePoTokenUrl())) {
+            this.remotePoToken = new RemotePoToken(options.getRemotePoTokenUrl(), options.getRemotePoTokenPassword());
+        }
     }
 
     @Override
@@ -171,6 +175,16 @@ public class YoutubeAudioSourceManager implements AudioSourceManager {
 
     public boolean isAllowAutoDubbedAudio() {
         return allowAutoDubbedAudio;
+    }
+
+    @Nullable
+    public RemotePoToken.Result generatePoToken(@NotNull HttpInterface httpInterface, @Nullable String contentBinding) throws IOException {
+        return remotePoToken == null ? null : remotePoToken.generate(httpInterface, contentBinding);
+    }
+
+    @Nullable
+    public String getVisitorData() {
+        return contextFilter.getVisitorData();
     }
 
     public void setPlaylistPageCount(int count) {

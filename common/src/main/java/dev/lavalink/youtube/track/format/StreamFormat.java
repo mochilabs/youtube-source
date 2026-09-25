@@ -24,6 +24,8 @@ public class StreamFormat {
   private final boolean defaultAudioTrack;
   private final boolean isAutoDubbed;
   private final boolean isDrc;
+  private final long lastModified;
+  private final String xtags;
 
   /**
    * @param type Mime type of the format
@@ -52,6 +54,58 @@ public class StreamFormat {
       boolean isAutoDubbed,
       boolean isDrc
   ) {
+    this(type, itag, bitrate, contentLength, audioChannels, url, nParameter, signature, signatureKey, isDefaultAudioTrack, isAutoDubbed, isDrc, 0, null);
+  }
+
+  public StreamFormat(
+      ContentType type,
+      int itag,
+      long bitrate,
+      long contentLength,
+      long audioChannels,
+      String url,
+      String nParameter,
+      String signature,
+      String signatureKey,
+      boolean isDefaultAudioTrack,
+      boolean isDrc,
+      long lastModified,
+      String xtags
+  ) {
+    this(type, itag, bitrate, contentLength, audioChannels, url, nParameter, signature, signatureKey, isDefaultAudioTrack, false, isDrc, lastModified, xtags);
+  }
+
+  /**
+   * @param type Mime type of the format
+   * @param bitrate Bitrate of the format
+   * @param contentLength Length in bytes of the media
+   * @param audioChannels Number of audio channels
+   * @param url Base URL for the playback of this format. May be {@code null} for SABR-only formats.
+   * @param nParameter n parameter for this format
+   * @param signature Cipher signature for this format
+   * @param signatureKey The key to use for deciphered signature in the final playback URL
+   * @param isDefaultAudioTrack Whether this format contains an audio track that is used by default.
+   * @param isAutoDubbed Whether this format contains an AI dubbed audio track.
+   * @param isDrc Whether this format has Dynamic Range Compression.
+   * @param lastModified The format's last-modified timestamp (lmt), used for SABR requests.
+   * @param xtags The format's xtags string, used for SABR requests.
+   */
+  public StreamFormat(
+      ContentType type,
+      int itag,
+      long bitrate,
+      long contentLength,
+      long audioChannels,
+      String url,
+      String nParameter,
+      String signature,
+      String signatureKey,
+      boolean isDefaultAudioTrack,
+      boolean isAutoDubbed,
+      boolean isDrc,
+      long lastModified,
+      String xtags
+  ) {
     this.info = FormatInfo.get(type);
     this.type = type;
     this.itag = itag;
@@ -65,6 +119,8 @@ public class StreamFormat {
     this.defaultAudioTrack = isDefaultAudioTrack;
     this.isAutoDubbed = isAutoDubbed;
     this.isDrc = isDrc;
+    this.lastModified = lastModified;
+    this.xtags = xtags;
   }
 
   /**
@@ -111,6 +167,28 @@ public class StreamFormat {
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * @return {@code true} if this format has no direct playback URL and must be played via SABR.
+   */
+  public boolean isSabr() {
+    return url == null;
+  }
+
+  /**
+   * @return The format's last-modified timestamp (lmt), used to identify the format in SABR requests.
+   */
+  public long getLastModified() {
+    return lastModified;
+  }
+
+  /**
+   * @return The format's xtags string, used to identify the format in SABR requests.
+   */
+  @Nullable
+  public String getXtags() {
+    return xtags;
   }
 
   /**

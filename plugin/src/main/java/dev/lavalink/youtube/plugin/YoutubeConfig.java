@@ -16,7 +16,7 @@ public class YoutubeConfig {
     private boolean allowDirectPlaylistIds = true;
     private boolean allowAutoDubbedAudio = true;
     private YoutubeRemoteCipherConfig remoteCipher;
-    private Pot pot = null;
+    private YoutubeRemotePoTokenConfig remotePot;
     private String[] clients;
     private Map<String, ClientOptions> clientOptions = new HashMap<>();
     private YoutubeOauthConfig oauth = null;
@@ -39,10 +39,6 @@ public class YoutubeConfig {
 
     public boolean getAllowAutoDubbedAudio() {
         return allowAutoDubbedAudio;
-    }
-
-    public Pot getPot() {
-        return pot;
     }
 
     public String[] getClients() {
@@ -77,10 +73,6 @@ public class YoutubeConfig {
         this.allowAutoDubbedAudio = allowAutoDubbedAudio;
     }
 
-    public void setPot(Pot pot) {
-        this.pot = pot;
-    }
-
     public void setClients(String[] clients) {
         this.clients = clients;
     }
@@ -99,6 +91,14 @@ public class YoutubeConfig {
 
     public void setRemoteCipher(YoutubeRemoteCipherConfig remoteCipher) {
         this.remoteCipher = remoteCipher;
+    }
+
+    public YoutubeRemotePoTokenConfig getRemotePot() {
+        return remotePot;
+    }
+
+    public void setRemotePot(YoutubeRemotePoTokenConfig remotePot) {
+        this.remotePot = remotePot;
     }
 
 }

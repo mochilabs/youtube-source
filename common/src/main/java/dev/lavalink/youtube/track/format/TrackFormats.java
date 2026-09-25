@@ -1,6 +1,7 @@
 package dev.lavalink.youtube.track.format;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,48 @@ public class TrackFormats {
     private final List<StreamFormat> formats;
     private final String playerScriptUrl;
     private final boolean allowAutoDubbedAudio;
+    private final String serverAbrStreamingUrl;
+    private final String videoPlaybackUstreamerConfig;
+    private final String poToken;
+
+    public TrackFormats(@NotNull List<StreamFormat> formats,
+                        @NotNull String playerScriptUrl) {
+        this(formats, playerScriptUrl, true, null, null, null);
+    }
 
     public TrackFormats(@NotNull List<StreamFormat> formats,
                         @NotNull String playerScriptUrl,
                         boolean allowAutoDubbedAudio) {
+        this(formats, playerScriptUrl, allowAutoDubbedAudio, null, null, null);
+    }
+
+    public TrackFormats(@NotNull List<StreamFormat> formats,
+                        @NotNull String playerScriptUrl,
+                        @Nullable String serverAbrStreamingUrl,
+                        @Nullable String videoPlaybackUstreamerConfig) {
+        this(formats, playerScriptUrl, true, serverAbrStreamingUrl, videoPlaybackUstreamerConfig, null);
+    }
+
+    public TrackFormats(@NotNull List<StreamFormat> formats,
+                        @NotNull String playerScriptUrl,
+                        @Nullable String serverAbrStreamingUrl,
+                        @Nullable String videoPlaybackUstreamerConfig,
+                        @Nullable String poToken) {
+        this(formats, playerScriptUrl, true, serverAbrStreamingUrl, videoPlaybackUstreamerConfig, poToken);
+    }
+
+    public TrackFormats(@NotNull List<StreamFormat> formats,
+                        @NotNull String playerScriptUrl,
+                        boolean allowAutoDubbedAudio,
+                        @Nullable String serverAbrStreamingUrl,
+                        @Nullable String videoPlaybackUstreamerConfig,
+                        @Nullable String poToken) {
         this.formats = formats;
         this.playerScriptUrl = playerScriptUrl;
         this.allowAutoDubbedAudio = allowAutoDubbedAudio;
+        this.serverAbrStreamingUrl = serverAbrStreamingUrl;
+        this.videoPlaybackUstreamerConfig = videoPlaybackUstreamerConfig;
+        this.poToken = poToken;
     }
 
     @NotNull
@@ -33,6 +69,38 @@ public class TrackFormats {
     @NotNull
     public String getPlayerScriptUrl() {
         return playerScriptUrl;
+    }
+
+    /**
+     * @return The server ABR streaming URL used for SABR playback, or {@code null} if unavailable.
+     */
+    @Nullable
+    public String getServerAbrStreamingUrl() {
+        return serverAbrStreamingUrl;
+    }
+
+    /**
+     * @return The base64 videoPlaybackUstreamerConfig required for SABR requests, or {@code null}.
+     */
+    @Nullable
+    public String getVideoPlaybackUstreamerConfig() {
+        return videoPlaybackUstreamerConfig;
+    }
+
+    @Nullable
+    public String getPoToken() {
+        return poToken;
+    }
+
+    @Nullable
+    public StreamFormat getFormatByItag(int itag) {
+        for (StreamFormat format : formats) {
+            if (format.getItag() == itag && !format.isSabr()) {
+                return format;
+            }
+        }
+
+        return null;
     }
 
     @NotNull
